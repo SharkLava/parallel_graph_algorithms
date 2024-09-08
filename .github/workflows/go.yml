@@ -1,0 +1,37 @@
+# This workflow will build a golang project
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-go
+
+name: Go
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up Go
+      uses: actions/setup-go@v4
+      with:
+        go-version: '1.18'
+
+    - name: Build
+      run: go build -v ./cmd/graph_algo
+
+    - name: Test
+      run: go test -v ./...
+
+    - name: Run BFS
+      run: ./graph_algo -algo bfs -size 100 -density 0.1
+
+    - name: Run Bellman-Ford
+      run: ./graph_algo -algo bellman-ford -size 100 -density 0.1
+
+    - name: Run Floyd-Warshall
+      run: ./graph_algo -algo floyd-warshall -size 100 -density 0.1
