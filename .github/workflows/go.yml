@@ -34,4 +34,69 @@ jobs:
       run: ./graph_algo -algo bellman-ford -size 100 -density 0.1
 
     - name: Run Floyd-Warshall
-      run: ./graph_algo -algo floyd-warshall -size 100 -density 0.1
+      run: ./graph_algo -algo floyd-warshall -size 100 -density 0.1  
+      
+  release:
+    name: Release Build
+    runs-on: ubuntu-latest
+    needs: build
+    if: startsWith(github.ref, 'refs/tags/')
+
+    steps:
+    - name: Check out code into the Go module directory
+      uses: actions/checkout@v4
+
+    - name: Set up Go
+      uses: actions/setup-go@v5
+      with:
+        go-version: ^1.16
+
+    - name: Build for Linux
+      run: GOOS=linux GOARCH=amd64 go build -o parallel_graph_algorithms-linux-amd64 ./cmd/graph_algo
+
+    - name: Build for macOS
+      run: GOOS=darwin GOARCH=amd64 go build -o parallel_graph_algorithms-darwin-amd64 ./cmd/graph_algo
+
+    - name: Build for Windows
+      run: GOOS=windows GOARCH=amd64 go build -o parallel_graph_algorithms-windows-amd64.exe ./cmd/graph_algo
+
+    - name: Create Release
+      id: create_release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: ${{ github.ref_name }}
+        release_name: Release ${{ github.ref_name }}
+        draft: false
+        prerelease: false
+
+    - name: Upload Linux Build
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./parallel_graph_algorithms-linux-amd64
+        asset_name: parallel_graph_algorithms-linux-amd64
+        asset_content_type: application/octet-stream
+
+    - name: Upload macOS Build
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./parallel_graph_algorithms-darwin-amd64
+        asset_name: parallel_graph_algorithms-darwin-amd64
+        asset_content_type: application/octet-stream
+
+    - name: Upload Windows Build
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./parallel_graph_algorithms-windows-amd64.exe
+        asset_name: parallel_graph_algorithms-windows-amd64.exe
+        asset_content_type: application/octet-stream
