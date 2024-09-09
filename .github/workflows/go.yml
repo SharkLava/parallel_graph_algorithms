@@ -49,7 +49,7 @@ jobs:
     - name: Set up Go
       uses: actions/setup-go@v5
       with:
-        go-version: ^1.16
+        go-version: ^1.18
 
     - name: Build for Linux
       run: GOOS=linux GOARCH=amd64 go build -o parallel_graph_algorithms-linux-amd64 ./cmd/graph_algo
