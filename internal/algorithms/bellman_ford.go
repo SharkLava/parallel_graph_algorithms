@@ -1,8 +1,8 @@
 package algorithms
 
 import (
-	"parallel_graph_algorithms/internal/graph"
 	"math"
+	"parallel_graph_algorithms/internal/graph"
 	"runtime"
 	"sync"
 )

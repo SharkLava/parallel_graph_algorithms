@@ -9,13 +9,8 @@ import (
 
 // SpectralClustering performs spectral clustering on the graph
 func SpectralClustering(g *graph.Graph, k int) []int {
-	// Step 1: Compute the Laplacian matrix
 	laplacian := computeLaplacian(g)
-
-	// Step 2: Compute the k smallest eigenvectors
 	eigenvectors := computeEigenvectors(laplacian, k)
-
-	// Step 3: Perform k-means clustering on the eigenvectors
 	return kMeansClustering(eigenvectors, k)
 }
 
@@ -68,7 +63,7 @@ func computeEigenvectors(matrix [][]float64, k int) [][]float64 {
 		}
 	}
 
-	numIterations := 100
+	numIterations := 100 //TODO Accept as commandline arg(?)
 	var wg sync.WaitGroup
 
 	for iter := 0; iter < numIterations; iter++ {
@@ -95,7 +90,6 @@ func computeEigenvectors(matrix [][]float64, k int) [][]float64 {
 					}
 				}
 
-				// Normalize
 				norm := 0.0
 				for j := 0; j < n; j++ {
 					norm += newVector[j] * newVector[j]
