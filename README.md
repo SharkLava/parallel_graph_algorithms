@@ -5,12 +5,13 @@ This project implements and compares the performance of various graph algorithms
 - Breadth-First Search (BFS)
 - Bellman-Ford
 - Floyd-Warshall
+- Spectral Clustering
 
 All implementations are optimized for parallel execution to take advantage of multi-core processors.
 
 ## Requirements
 
-- Go 1.16 or higher
+- Go 1.18 or higher
 
 ## Installation
 
@@ -34,7 +35,7 @@ Run the program using the following command:
 ```
 
 Where:
-- `<algorithm>` is one of: `bfs`, `bellman-ford`, or `floyd-warshall`
+- `<algorithm>` is one of: `bfs`, `bellman-ford`, `spectral-clustering`, or `floyd-warshall`
 - `<graph_size>` is the number of vertices in the graph
 - `<graph_density>` is a float between 0 and 1 representing the density of edges in the graph
 
@@ -51,6 +52,7 @@ Example:
   - `bfs.go`: BFS algorithm implementations
   - `bellman_ford.go`: Bellman-Ford algorithm implementations
   - `floyd_warshall.go`: Floyd-Warshall algorithm implementations
+  - `spectral_clustering.go`: Spectral Clustering algorithm implementation
 
 ## Performance
 
