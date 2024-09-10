@@ -3,9 +3,9 @@ package main
 import (
 	"flag"
 	"fmt"
+	"math/rand"
 	"parallel_graph_algorithms/internal/algorithms"
 	"parallel_graph_algorithms/internal/graph"
-	"math/rand"
 	"time"
 )
 
@@ -25,6 +25,8 @@ func main() {
 		runBellmanFord(g, start)
 	case "floyd-warshall":
 		runFloydWarshall(g)
+	case "spectral-clustering":
+		runSpectralClustering(g)
 	default:
 		fmt.Println("Invalid algorithm. Please choose 'bfs', 'bellman-ford', or 'floyd-warshall'.")
 	}
@@ -97,5 +99,25 @@ func runFloydWarshall(g *graph.Graph) {
 		x, y := rand.Intn(g.Vertices), rand.Intn(g.Vertices)
 		fmt.Printf("Distance from %d to %d: Regular = %d, Matrix = %d\n",
 			x, y, regularResult[x][y], matrixResult[x][y])
+	}
+}
+
+func runSpectralClustering(g *graph.Graph) {
+	k := 3 // Number of clusters, can be made configurable
+	start := time.Now()
+	result := algorithms.SpectralClustering(g, k)
+	duration := time.Since(start)
+
+	fmt.Printf("Spectral Clustering Results:\n")
+	fmt.Printf("Duration: %v (%.2f ms)\n", duration, float64(duration.Nanoseconds())/1e6)
+
+	// Print cluster sizes
+	clusterSizes := make([]int, k)
+	for _, cluster := range result {
+		clusterSizes[cluster]++
+	}
+	fmt.Println("Cluster sizes:")
+	for i, size := range clusterSizes {
+		fmt.Printf("Cluster %d: %d nodes\n", i, size)
 	}
 }
