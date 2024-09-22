@@ -1,41 +1,38 @@
-# This workflow will build a golang project
-# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-go
-
 name: Go
 
 on:
   push:
-    branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
+    branches: [ main ]
+    tags: ['v*.*.*']  # Adjust this to match your tag pattern
 
 jobs:
-
   build:
+    name: Build and Test
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v4
-
-    - name: Set up Go
-      uses: actions/setup-go@v4
+    - name: Set up Go 1.x
+      uses: actions/setup-go@v5
       with:
-        go-version: '1.18'
+        go-version: ^1.16
+      id: go
+
+    - name: Check out code into the Go module directory
+      uses: actions/checkout@v4
+
+    - name: Get dependencies
+      run: |
+        go get -v -t -d ./...
+        if [ -f Gopkg.toml ]; then
+            curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
+            dep ensure
+        fi
 
     - name: Build
-      run: go build -v ./cmd/graph_algo
+      run: go build -v ./cmd/ca
 
     - name: Test
       run: go test -v ./...
 
-    - name: Run BFS
-      run: ./graph_algo -algo bfs -size 100 -density 0.1
-
-    - name: Run Bellman-Ford
-      run: ./graph_algo -algo bellman-ford -size 100 -density 0.1
-
-    - name: Run Floyd-Warshall
-      run: ./graph_algo -algo floyd-warshall -size 100 -density 0.1  
-      
   release:
     name: Release Build
     runs-on: ubuntu-latest
@@ -49,16 +46,16 @@ jobs:
     - name: Set up Go
       uses: actions/setup-go@v5
       with:
-        go-version: ^1.18
+        go-version: ^1.16
 
     - name: Build for Linux
-      run: GOOS=linux GOARCH=amd64 go build -o parallel_graph_algorithms-linux-amd64 ./cmd/graph_algo
+      run: GOOS=linux GOARCH=amd64 go build -o cellular-automata-linux-amd64 ./cmd/ca
 
     - name: Build for macOS
-      run: GOOS=darwin GOARCH=amd64 go build -o parallel_graph_algorithms-darwin-amd64 ./cmd/graph_algo
+      run: GOOS=darwin GOARCH=amd64 go build -o cellular-automata-darwin-amd64 ./cmd/ca
 
     - name: Build for Windows
-      run: GOOS=windows GOARCH=amd64 go build -o parallel_graph_algorithms-windows-amd64.exe ./cmd/graph_algo
+      run: GOOS=windows GOARCH=amd64 go build -o cellular-automata-windows-amd64.exe ./cmd/ca
 
     - name: Create Release
       id: create_release
@@ -77,8 +74,8 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./parallel_graph_algorithms-linux-amd64
-        asset_name: parallel_graph_algorithms-linux-amd64
+        asset_path: ./cellular-automata-linux-amd64
+        asset_name: cellular-automata-linux-amd64
         asset_content_type: application/octet-stream
 
     - name: Upload macOS Build
@@ -87,8 +84,8 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./parallel_graph_algorithms-darwin-amd64
-        asset_name: parallel_graph_algorithms-darwin-amd64
+        asset_path: ./cellular-automata-darwin-amd64
+        asset_name: cellular-automata-darwin-amd64
         asset_content_type: application/octet-stream
 
     - name: Upload Windows Build
@@ -97,6 +94,6 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./parallel_graph_algorithms-windows-amd64.exe
-        asset_name: parallel_graph_algorithms-windows-amd64.exe
+        asset_path: ./cellular-automata-windows-amd64.exe
+        asset_name: cellular-automata-windows-amd64.exe
         asset_content_type: application/octet-stream
