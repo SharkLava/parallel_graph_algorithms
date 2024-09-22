@@ -28,7 +28,7 @@ jobs:
         fi
 
     - name: Build
-      run: go build -v ./cmd/ca
+      run: go build -v ./cmd/graph_algo
 
     - name: Test
       run: go test -v ./...
@@ -49,13 +49,13 @@ jobs:
         go-version: ^1.16
 
     - name: Build for Linux
-      run: GOOS=linux GOARCH=amd64 go build -o cellular-automata-linux-amd64 ./cmd/ca
+      run: GOOS=linux GOARCH=amd64 go build -o cellular-automata-linux-amd64 ./cmd/graph_algo
 
     - name: Build for macOS
-      run: GOOS=darwin GOARCH=amd64 go build -o cellular-automata-darwin-amd64 ./cmd/ca
+      run: GOOS=darwin GOARCH=amd64 go build -o cellular-automata-darwin-amd64 ./cmd/graph_algo
 
     - name: Build for Windows
-      run: GOOS=windows GOARCH=amd64 go build -o cellular-automata-windows-amd64.exe ./cmd/ca
+      run: GOOS=windows GOARCH=amd64 go build -o cellular-automata-windows-amd64.exe ./cmd/graph_algo
 
     - name: Create Release
       id: create_release
